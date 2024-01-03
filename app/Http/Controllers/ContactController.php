@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ContactController extends Controller
 {
@@ -30,7 +32,29 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => [
+                'required',
+                'email',
+                'exists:users',
+                Rule::notIn([auth()->user()->email])
+            ],
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+    
+        $contact = Contact::create([
+            'name'       => $request->name,
+            'user_id'    => auth()->user()->id,
+            'contact_id' => $user->id,
+
+        ]);
+
+        session()->flash('flash.banner', 'El contacto se ha creado correctamente');
+        session()->flash('flash.bannerStyle', 'success');
+
+        return redirect()->route('contacts.edit', $contact);
     }
 
     /**
