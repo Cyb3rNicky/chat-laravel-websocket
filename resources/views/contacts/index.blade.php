@@ -40,7 +40,25 @@
                           <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{$contact->name}}</td>
                           <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{$contact->user->email}}</td>
                           <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                            <a href="{{ route('contacts.edit', $contact) }}" class="text-indigo-600 hover:text-indigo-900">Editar<span class="sr-only">, Lindsay Walton</span></a>
+                            <div class="flex justify-end space-x-2">
+
+                              <a href="{{ route('contacts.edit', $contact) }}" class="text-indigo-600 hover:text-indigo-900">
+                                <x-heroicon-o-pencil-square class="w-6 h-6 mt-2 text-blue-800 hover:text-blue-600"/>
+                              </a>
+                              
+                              <form action="{{route('contacts.destroy', $contact)}}" method="POST">
+
+                                @csrf
+
+                                @method('DELETE')
+                                
+                                <button type="submit" class="">
+                                    <x-heroicon-o-trash class="w-6 h-6 mt-2 text-red-800 hover:text-blue-600"/>
+                                </button>
+                              
+                              </form>
+
+                            </div>
                           </td>
                         </tr>
                         @endforeach

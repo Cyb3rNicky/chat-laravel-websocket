@@ -55,14 +55,6 @@ class ContactController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Contact $contact)
-    {
-        return view('contacts.show', compact('contact'));
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Contact $contact)
@@ -98,6 +90,11 @@ class ContactController extends Controller
      */
     public function destroy(Contact $contact)
     {
-        //
+        $contact->delete();
+
+        session()->flash('flash.banner', 'El contacto se eliminó correctamente');
+        session()->flash('flash.bannerStyle', 'success');
+
+        return redirect()->route('contacts.index', $contact);
     }
 }
