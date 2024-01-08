@@ -25,7 +25,7 @@
 
                     <ul class="space-y-4">
                         @forelse ($contacts as $contact)
-                            <li class="cursor-pointer">
+                            <li class="cursor-pointer" wire:click="open_chat_contact({{$contact}})">
                                 <div class="flex">
     
                                     <figure class="flex-shrink-0">
@@ -58,6 +58,42 @@
         </div>
 
         <div class="col-span-2">
+
+
+            @if ($contactChat || $chat)
+                
+           <div class="bg-gray-100 h-16 flex items-center px-3">
+            
+            <figure>
+                <img class="w-10 h-10 rounded-full object-cover object-center" src="{{$contactChat->user->profile_photo_url}}" alt="{{$contactChat->name}}">
+            </figure>
+
+            <div class="ml-4">
+                <p class="text-gray-800">
+                    {{$contactChat->name}}
+                </p>
+                <p class="text-green-500">
+                    Online
+                </p>
+            </div>
+
+           </div>
+
+           <div class="h-[calc(100vh-11rem)] overflow-auto">
+            El contenido de nuestro chat
+           </div>
+
+           <form class="bg-gray-100 h-16 flex items-center px-4" wire:submit.prevent="sendMessage()">
+            
+            <x-input wire:model="bodyMessage" type="text" class="flex-1" placeholder="Escriba un mensaje.." />
+
+            <button class="flex-shrink-0 ml-4 text-2xl items-center">
+                <x-heroicon-o-paper-airplane class="w-6 h-6 mt-2 text-gray-600 hover:text-green-600"/>
+            </button>
+
+           </form>
+
+            @else
             
             <div class="w-full h-full flex justify-center items-center">
 
@@ -67,6 +103,9 @@
                 </div>    
             
             </div>
+                
+            @endif
+            
 
 
         </div>
