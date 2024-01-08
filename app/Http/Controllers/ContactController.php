@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,18 +31,8 @@ class ContactController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ContactRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => [
-                'required',
-                'email',
-                'exists:users',
-                Rule::notIn([auth()->user()->email])
-            ],
-        ]);
-
         $user = User::where('email', $request->email)->first();
     
         $contact = Contact::create([
@@ -50,6 +41,7 @@ class ContactController extends Controller
             'contact_id' => $user->id,
 
         ]);
+
 
         session()->flash('flash.banner', 'El contacto se ha creado correctamente');
         session()->flash('flash.bannerStyle', 'success');
@@ -70,7 +62,7 @@ class ContactController extends Controller
      */
     public function edit(Contact $contact)
     {
-        return view('contacts.show', compact('contact'));
+        return view('contacts.edit', compact('contact'));
     }
 
     /**
