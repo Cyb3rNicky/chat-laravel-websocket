@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
 use App\Models\User;
+use App\Rules\InvalidEmail;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -33,6 +34,10 @@ class ContactController extends Controller
      */
     public function store(ContactRequest $request)
     {
+        $request->validate([    
+            'email' => [new InvalidEmail()],
+        ]);
+
         $user = User::where('email', $request->email)->first();
     
         $contact = Contact::create([
@@ -68,9 +73,24 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Contact $contact)
+    public function update(ContactRequest $request, Contact $contact)
     {
-        //
+        $request->validate([
+            'email' => [new InvalidEmail($contact->user->email)],
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+    
+        $contact->update([
+            'name'       => $request->name,
+            'contact_id' => $user->id,
+        ]);
+
+        session()->flash('flash.banner', 'El contacto se ha actualizado correctamente');
+        session()->flash('flash.bannerStyle', 'success');
+
+        return redirect()->route('contacts.edit', $contact);
+
     }
 
     /**
