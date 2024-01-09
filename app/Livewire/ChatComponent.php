@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Chat;
 use App\Models\Contact;
+use App\Models\Message;
 use Livewire\Component;
 
 class ChatComponent extends Component
@@ -13,6 +14,7 @@ class ChatComponent extends Component
     public $contacts;
     public $contactChat, $chat;
     public $bodyMessage;
+    public $messages;
 
     public function getContactsProperty()
     {
@@ -28,6 +30,13 @@ class ChatComponent extends Component
         return $this->contacts;
     }
 
+    public function getMessageProperty()
+    {
+        $this->messages = $this->chat ? $this->chat->messages : [];
+
+        return $this->messages;
+    }
+
     public function open_chat_contact(Contact $contact)
     {
         $chat = auth()->user()->chats()
@@ -39,15 +48,19 @@ class ChatComponent extends Component
 
         if($chat){
             $this->chat = $chat;
+            $this->reset('contactChat', 'bodyMessage');
         }else{
             $this->contactChat = $contact;
+            $this->reset('chat', 'bodyMessage');            
         }
     }
 
     public function sendMessage()
     {
         $this->validate([
-           'bodyMessage' => 'required' 
+            'bodyMessage' => 'required'
+        ], [
+            'bodyMessage.required' => 'El campo mensaje es obligatorio'
         ]);
 
         if(!$this->chat){
@@ -66,6 +79,7 @@ class ChatComponent extends Component
     public function render()
     {
         $this->getContactsProperty();
+        $this->getMessageProperty();
         return view('livewire.chat-component')->layout('components.layouts.chat');
     }
 }
