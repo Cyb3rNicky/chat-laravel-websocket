@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\Chat;
 use App\Models\Contact;
 use App\Models\Message;
+use App\Notifications\NewMessage;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
 
 class ChatComponent extends Component
@@ -16,6 +18,17 @@ class ChatComponent extends Component
     public $bodyMessage;
     public $messages;
     public $chats;
+
+
+    public function getListeners()
+    {
+
+        $user_id = auth()->user()->id;
+
+        return [
+            "echo-notification:App.Models.User.{$user_id},notification" => 'render',
+        ];
+    }
 
     public function getContactsProperty()
     {
@@ -43,6 +56,11 @@ class ChatComponent extends Component
         $this->chats = auth()->user()->chats()->get()->sortByDesc('last_message_at'); 
 
         return $this->chats;
+    }
+
+    public function getUsersNotificationsProperty()
+    {
+        return $this->chat ? $this->chat->users->where('id', '!=', auth()->id()) : []; 
     }
 
     public function open_chat_contact(Contact $contact)
@@ -86,6 +104,8 @@ class ChatComponent extends Component
             'content'    => $this->bodyMessage,
             'user_id' => auth()->user()->id
         ]);
+
+        Notification::send($this->users_notifications, new NewMessage());
 
         $this->reset('bodyMessage', 'contactChat');
     }
