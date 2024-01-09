@@ -115,6 +115,11 @@ class ChatComponent extends Component
         $this->getContactsProperty();
         $this->getMessageProperty();
         $this->getChatsProperty();
+
+        if ($this->chat) {
+            $this->dispatch('scrollIntoView');
+        }
+
         return view('livewire.chat-component')->layout('components.layouts.chat');
     }
 }

@@ -26,7 +26,7 @@
                     </h2>
 
                     <ul class="space-y-4">
-                        @forelse ($contacts as $contact)
+                        @foreach ($contacts as $contact)
                             <li class="cursor-pointer" wire:click="open_chat_contact({{$contact}})">
                                 <div class="flex">
     
@@ -45,10 +45,8 @@
     
                                 </div>
                             </li>
-                        @empty
-                            
-                        @endforelse
-    
+                        @endforeach
+
                     </ul>
 
                 </div>
@@ -87,8 +85,6 @@
                 @endforeach
                     
                 @endif
-                
-
                 
             
             </div>
@@ -151,6 +147,8 @@
                 
             @endforeach
 
+            <span id="final"></span>
+
             </div>
 
            <form class="bg-gray-100 h-16 flex items-center px-4" wire:submit.prevent="sendMessage()">
@@ -176,10 +174,27 @@
                 
             @endif
             
-
-
+            
         </div>
 
+        {{-- <span id="final"></span> --}}
+        
+        @push('js')
+        <script>
+                console.log(document.getElementById('final'));
+        </script>
+        @endpush
+
+        @push('js')
+            <script>
+                Livewire.on('scrollIntoView', function () {
+                    setTimeout(function () {
+                        document.getElementById('final').scrollIntoView(true);
+                    }, 10);
+                });
+            </script>
+        @endpush
+    
     </div>
 
 </div>
