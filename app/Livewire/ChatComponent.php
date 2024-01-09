@@ -15,6 +15,7 @@ class ChatComponent extends Component
     public $contactChat, $chat;
     public $bodyMessage;
     public $messages;
+    public $chats;
 
     public function getContactsProperty()
     {
@@ -37,6 +38,13 @@ class ChatComponent extends Component
         return $this->messages;
     }
 
+    public function getChatsProperty()
+    {
+        $this->chats = auth()->user()->chats()->get()->sortByDesc('last_message_at'); 
+
+        return $this->chats;
+    }
+
     public function open_chat_contact(Contact $contact)
     {
         $chat = auth()->user()->chats()
@@ -48,11 +56,17 @@ class ChatComponent extends Component
 
         if($chat){
             $this->chat = $chat;
-            $this->reset('contactChat', 'bodyMessage');
+            $this->reset('contactChat', 'bodyMessage', 'search');
         }else{
             $this->contactChat = $contact;
-            $this->reset('chat', 'bodyMessage');            
+            $this->reset('chat', 'bodyMessage', 'search');            
         }
+    }
+
+    public function open_chat(Chat $chat)
+    {
+        $this->chat = $chat;
+        $this->reset('contactChat', 'bodyMessage');  
     }
 
     public function sendMessage()
@@ -80,6 +94,7 @@ class ChatComponent extends Component
     {
         $this->getContactsProperty();
         $this->getMessageProperty();
+        $this->getChatsProperty();
         return view('livewire.chat-component')->layout('components.layouts.chat');
     }
 }

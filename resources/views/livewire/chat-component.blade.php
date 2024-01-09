@@ -17,6 +17,8 @@
             </div>
 
             <div class="h-[calc(100vh-10.5rem)] overflow-auto border-t border-gray-200">
+
+                @if ($this->chats->count() == 0 || $search)
                 
                 <div class="px-4 py-3">
                     <h2 class="text-teal-600 text-lg mb-4">
@@ -50,6 +52,42 @@
                     </ul>
 
                 </div>
+                
+                @else
+
+                @foreach ($this->chats as $chatList)
+                    
+                    <div wire:key="chats-{{$chatList->id}}"
+                         wire:click="open_chat({{$chatList}})" 
+                         class="flex items-center justify-between bg-white hover:bg-gray-100 cursor-pointer px-3">
+                        
+                        <figure>
+                            <img class="h-12 w-12 object-cover object-center rounded-full" src="{{$chatList->image}}" alt="{{$chatList->name}}">
+                        </figure>
+
+                        <div class="w-[calc(100%-4rem)] py-4 border-b border-gray-200">
+                            
+                            <div class="flex justify-between items-center">
+                                <p>
+                                    {{$chatList->name}}
+                                </p>
+                                <p class="text-xs">
+                                    {{$chatList->last_message_at->format('h:i A')}}
+                                </p>
+                            </div>
+
+                            <p class="text-sm text-gray-700 mt-1 truncate">
+                                {{ $chatList->messages->last()->content}}
+                            </p>
+                            
+                        </div>    
+
+                    </div>
+
+                @endforeach
+                    
+                @endif
+                
 
                 
             
@@ -98,13 +136,13 @@
            
             @foreach ($this->messages as $message)
             
-            <div class="flex justify-end mb-2">
+            <div class="flex {{$message->user_id == auth()->id() ? 'justify-end' : ''}} mb-2">
 
-                <div class="rounded px-3 py-2 bg-green-100">
+                <div class="rounded px-3 py-2 {{$message->user_id == auth()->id() ? 'bg-green-100' : 'bg-gray-100'}}">
                     <p class="text-sm">
                         {{$message->content}}
                     </p>
-                    <p class="text-right text-xs mt-1 text-gray-600">
+                    <p class="{{$message->user_id == auth()->id() ? ' text-right' : ''}} text-xs mt-1 text-gray-600">
                         {{$message->created_at->format('d-m-y h:i A')}}
                     </p>
                 </div>
