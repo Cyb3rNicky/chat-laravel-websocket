@@ -6,7 +6,9 @@ use App\Models\Chat;
 use App\Models\Contact;
 use App\Models\Message;
 use App\Notifications\NewMessage;
+use App\Notifications\UserTyping;
 use Illuminate\Support\Facades\Notification;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class ChatComponent extends Component
@@ -61,6 +63,14 @@ class ChatComponent extends Component
     public function getUsersNotificationsProperty()
     {
         return $this->chat ? $this->chat->users->where('id', '!=', auth()->id()) : []; 
+    }
+
+    #[Computed]
+    public function updateBodyMessage($value)
+    {
+        if ($value) {
+            Notification::send($this->users_notifications, new UserTyping($this->chat));
+        }
     }
 
     public function open_chat_contact(Contact $contact)

@@ -196,5 +196,3 @@
         @endpush
     
     </div>
-
-</div>
